@@ -1,0 +1,55 @@
+# coding : utf-8
+
+
+import csv 
+import requests
+from bs4 import BeautifulSoup
+
+
+
+fichier = "ListeMammiferes.csv"
+
+url = "https://www.bestioles.ca/liste-mammiferes.html"
+
+# dans l'idée, sortir tous les noms des mammifères
+
+entetes = { 
+	"User-Agent":"Ophelie Farissier  -  étudiante à l'UQAM ",
+	"From":"phelie07@hotmail.fr"
+
+	}
+
+# pour faire du journalisme non caché 
+
+contenu = requests.get(url,headers=entetes)
+
+page = BeautifulSoup(contenu.text,"html.parser") 
+
+# pour analyser la liste de mammifères qui s'offre à nous
+
+
+# print(page.find_all("td", valign_="top").find_next("tr"))
+
+# après vérification dans l'URl, ce qui revient c'est "valign = "top" soit l'alignement vertical situé dans tr. j'ai essayé la methode donc du find_next
+
+n = 0
+
+bestioles = page.find("a", ["href"]).find_next("tr").find_all("td")
+
+for bestiole in bestioles:
+	n+=1
+
+	print(n, bestioles)
+	noms = bestiole.find("a").text
+	phrase = bestiole.find("td").text
+	href = bestiole.find("a")["href"]
+	infos = [noms, phrase, href]
+	print(infos)
+
+# j'ai fait un mélange des deux solutions par rapport aux éléments que j'avais, mais le prompt me signale que l'objet "find_next" n'a pas d'attribu
+
+mammifères = open(fichier, "a")
+survivants = csv.writer(mammifères)
+survivants.writerow(infos)
+
+# je vais trvailler dessus afin de comprendre mon erreur, mais je suis déja tellement en retard que je vais vous rendre ceci. 
